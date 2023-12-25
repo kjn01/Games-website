@@ -1,4 +1,5 @@
 import '../App.css';
+import { socket } from '../socket';
 
 export default function Space({ level, 
                                 currentLevel, 
@@ -10,9 +11,11 @@ export default function Space({ level,
                                 setGame, 
                                 turn, 
                                 hover, 
-                                revertHover }) {
+                                revertHover,
+                                code }) {
+
   function update() {
-    if (level > currentLevel) {
+    if (level > currentLevel && turn == "blue") {
       changeColor();
       let nextGame = [];
       for (let i = 0; i < game.length; i++) {
@@ -30,9 +33,7 @@ export default function Space({ level,
           }
         }
       }
-      // fetch("/api/updateBoard?board=" + nextGame)
-      //   .then((data) => console.log("STUFF: "+ data))
-      //   .then((data) => setGame(data));
+      socket.emit("updateBoard", {board: nextGame, game: code});
       setGame(nextGame);
     }
   }

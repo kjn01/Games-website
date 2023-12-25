@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Column from "./Column";
 
-export default function Board() {
+export default function Board({ code }) {
 
   const [game, setGame] = useState([[0, 0, 0, 0, 0, 0, 0],
                                     [0, 0, 0, 0, 0, 0, 0],
@@ -86,7 +86,7 @@ export default function Board() {
   let board = [];
 
   for (let i = 1; i <= 7; i++) {
-    board.push(<Column turn={turn} changeTurn={changeTurn} game={game} setGame={setGame} col={i} />);
+    board.push(<Column turn={turn} changeTurn={changeTurn} game={game} setGame={setGame} col={i} code={code} />);
   }
 
   return (

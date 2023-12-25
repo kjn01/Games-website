@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Space from "./Space";
+import { socket } from '../socket';
 
-export default function Column({ turn, changeTurn, game, setGame, col }) {
+let transfer = false;
+let updatedBoard = [];
+let nextGame = [];
+
+export default function Column({ turn, changeTurn, game, setGame, col, code }) {
   const [currentLevel, setCurrentLevel] = useState(0);
 
   function changeCurrentLevel() {
@@ -24,6 +29,53 @@ export default function Column({ turn, changeTurn, game, setGame, col }) {
     changeCurrentLevel();
   }
 
+  useEffect(() => {
+    socket.on("recieveBoard", (data) => {
+      if (turn == "red") {
+        transfer = true;
+        updatedBoard = data.board;
+        // alert(data.board);
+        nextGame = [];
+        for (let i = 0; i < updatedBoard[0].length; i++) {
+          let gameCol = [];
+          let updatedCol = [];
+          for (let j = 0; j < game.length; j++) {
+            gameCol.push(game[j][i]);
+          }
+          for (let j = 0; j < updatedBoard.length; j++) {
+            updatedCol.push(updatedBoard[j][i]);
+          }
+          // console.log("GAME: " + gameCol);
+          // console.log("UPDATED: " + updatedCol);
+          if (JSON.stringify(gameCol) != JSON.stringify(updatedCol)) {
+            console.log("col" + i);
+            for (let j = updatedBoard.length - 1; j >= 0; j--) {
+              if (updatedBoard[j][i] == 0) nextGame.push("white");
+              else if (updatedBoard[j][i] == 1) nextGame.push("blue");
+              else if (updatedBoard[j][i] == 2) nextGame.push("red");
+            }
+          }
+        }
+        return () => {
+          socket.disconnect();
+        }
+      }
+    });
+  }, []);
+
+  if (transfer) {
+    console.log("before");
+    console.log(updatedBoard);
+    console.log(game);
+
+    setColor(nextGame);
+    setGame(updatedBoard);
+
+    console.log("after");
+    console.log(updatedBoard);
+    console.log(game);
+    transfer = false;
+  }
   function hover() {
     const nextColors = colors.map((color, i) => {
       if (currentLevel < i) {
@@ -75,6 +127,7 @@ export default function Column({ turn, changeTurn, game, setGame, col }) {
           turn={turn}
           hover={hover}
           revertHover={revertHover}
+          code={code}
         />
       </td>);
   }
