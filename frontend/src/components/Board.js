@@ -8,7 +8,7 @@ export default function Board() {
                                     [0, 0, 0, 0, 0, 0, 0],
                                     [0, 0, 0, 0, 0, 0, 0],
                                     [0, 0, 0, 0, 0, 0, 0],
-                                    [0, 0, 0, 0, 0, 0, 0]])
+                                    [0, 0, 0, 0, 0, 0, 0]]);
 
 
   const [turn, setTurn] = useState("blue");

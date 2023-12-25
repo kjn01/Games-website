@@ -30,6 +30,9 @@ export default function Space({ level,
           }
         }
       }
+      // fetch("/api/updateBoard?board=" + nextGame)
+      //   .then((data) => console.log("STUFF: "+ data))
+      //   .then((data) => setGame(data));
       setGame(nextGame);
     }
   }
@@ -37,7 +40,7 @@ export default function Space({ level,
   function updateHover() {
     let colors = hover();
     const nextColors = colors.map((color, i) => {
-      if (i > level - 1) {
+      if (i > level - 1 && (colors[i] == "gray" || colors[i] == "previewBlue" || colors[i] == "previewRed")) {
         return "white";
       }
       else return color;
