@@ -24,10 +24,12 @@ io.on('connection', (socket) => {
 
     socket.on('joinGame', (data) => {
         socket.join(data);
+        console.log(`${socket.id} joined: ${data.game}`);
     });
 
     socket.on('updateBoard', (data) => {
         socket.to(data.game).emit('recieveBoard', data);
+        console.log(`${socket.id} moved`);
     });
 });
 
