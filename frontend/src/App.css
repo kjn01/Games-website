@@ -260,6 +260,10 @@ a {
   font-size: 30px;
 }
 
+div {
+  user-select: none;
+}
+
 .blue {
   color: rgb(3, 3, 187);
 }
