@@ -18,8 +18,11 @@ export default function Column({ turn, changeTurn, game, setGame, col, code, loc
       if (currentLevel === i) {
         return turn;
       }
+      else if (color === "gray") {
+        return "white";
+      }
       else {
-        return color;
+        return color
       }
     });
     setColor(nextColors);
