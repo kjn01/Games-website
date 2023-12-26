@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Column from "./Column";
+import { socket } from "../socket";
 
 export default function Board({ code }) {
 
@@ -73,14 +74,35 @@ export default function Board({ code }) {
     return false;
   }
 
+  useEffect(() => {
+    socket.on("recieveBoard", (data) => {
+      let updatedBoard = data.board;
+      let nextGame = [];
+      for (let i = 0; i < updatedBoard[0].length; i++) {
+        nextGame.push([]);
+        for (let j = updatedBoard.length - 1; j >= 0; j--) {
+          if (updatedBoard[j][i] == 0) nextGame[i].push("white");
+          else if (updatedBoard[j][i] == 1) nextGame[i].push("blue");
+          else if (updatedBoard[j][i] == 2) nextGame[i].push("red");
+        }
+      }
+      setGame(data.board);
+      return () => {
+        socket.disconnect();
+      }
+    });
+  }, []);
+
+  // console.log("board" + game);
+
   function restart() {
     setTurn("blue");
     setGame([[0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0]]);
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]]);
   }
 
   let board = [];

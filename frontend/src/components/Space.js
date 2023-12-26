@@ -15,7 +15,7 @@ export default function Space({ level,
                                 code }) {
 
   function update() {
-    if (level > currentLevel && turn == "blue") {
+    if (level > currentLevel /*&& turn == "blue"*/) {
       changeColor();
       let nextGame = [];
       for (let i = 0; i < game.length; i++) {
@@ -33,8 +33,8 @@ export default function Space({ level,
           }
         }
       }
-      socket.emit("updateBoard", {board: nextGame, game: code});
       setGame(nextGame);
+      socket.emit("updateBoard", {board: nextGame, game: code});
     }
   }
 

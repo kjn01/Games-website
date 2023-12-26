@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import Space from "./Space";
 import { socket } from '../socket';
 
-let transfer = false;
-let updatedBoard = [];
-let nextGame = [];
-
 export default function Column({ turn, changeTurn, game, setGame, col, code }) {
   const [currentLevel, setCurrentLevel] = useState(0);
 
-  function changeCurrentLevel() {
-    setCurrentLevel(currentLevel < 7 ? currentLevel + 1 : currentLevel);
+  function changeCurrentLevel(level) {
+    // console.log(col + " " + currentLevel);
+    if (level == null) setCurrentLevel(currentLevel < 7 ? currentLevel + 1 : currentLevel);
+    else setCurrentLevel(level < 7 ? level : 7);
+    console.log(col + " " + currentLevel);
   }
 
   const [colors, setColor] = useState(["white", "white", "white", "white", "white", "white"]);
@@ -26,63 +25,57 @@ export default function Column({ turn, changeTurn, game, setGame, col, code }) {
       }
     });
     setColor(nextColors);
-    changeCurrentLevel();
+    changeCurrentLevel(null);
   }
+
+  // console.log("column: " + game);
 
   useEffect(() => {
     socket.on("recieveBoard", (data) => {
-      if (turn == "red") {
-        transfer = true;
-        updatedBoard = data.board;
-        // alert(data.board);
-        nextGame = [];
-        for (let i = 0; i < updatedBoard[0].length; i++) {
-          let gameCol = [];
-          let updatedCol = [];
-          for (let j = 0; j < game.length; j++) {
-            gameCol.push(game[j][i]);
-          }
-          for (let j = 0; j < updatedBoard.length; j++) {
-            updatedCol.push(updatedBoard[j][i]);
-          }
-          // console.log("GAME: " + gameCol);
-          // console.log("UPDATED: " + updatedCol);
-          if (JSON.stringify(gameCol) != JSON.stringify(updatedCol)) {
-            console.log("col" + i);
-            for (let j = updatedBoard.length - 1; j >= 0; j--) {
-              if (updatedBoard[j][i] == 0) nextGame.push("white");
-              else if (updatedBoard[j][i] == 1) nextGame.push("blue");
-              else if (updatedBoard[j][i] == 2) nextGame.push("red");
-            }
-          }
+      let nextColors = [];
+      let changed = false;
+      let tempLevel = 0;
+      // console.log(game);
+      // console.log(data.board);
+      for (let i = data.board.length - 1; i >= 0; i--) {
+        if (data.board[i][col - 1] != game[i][col - 1]) {
+          changed = true;
+          // console.log("hi");
         }
-        return () => {
-          socket.disconnect();
+        if (data.board[i][col - 1] == 0) nextColors.push("white");
+        else if (data.board[i][col - 1] == 1) {
+          nextColors.push("blue");
+          tempLevel++;
+        }
+        else if (data.board[i][col - 1] == 2) {
+          nextColors.push("red");
+          tempLevel++;
         }
       }
+      // console.log("column: " + game);
+      // console.log("col: " + col);
+      // console.log("NExt: " + nextColors);
+      changeTurn();
+      setColor(nextColors);
+      if (changed) {
+        changeCurrentLevel(tempLevel);
+      }
+      // console.log(changed);
     });
+    
   }, []);
 
-  if (transfer) {
-    console.log("before");
-    console.log(updatedBoard);
-    console.log(game);
-
-    setColor(nextGame);
-    setGame(updatedBoard);
-
-    console.log("after");
-    console.log(updatedBoard);
-    console.log(game);
-    transfer = false;
-  }
   function hover() {
     const nextColors = colors.map((color, i) => {
-      if (currentLevel < i) {
-        return "gray";
-      }
-      else if (currentLevel == i) {
-        return turn == "blue" ? "previewBlue" : "previewRed";
+      
+      if (color == "white") {
+        if (currentLevel < i) {
+          return "gray";
+        }
+        else if (currentLevel == i) {
+          return turn == "blue" ? "previewBlue" : "previewRed";
+        }
+        else return color;
       }
       else {
         return color;

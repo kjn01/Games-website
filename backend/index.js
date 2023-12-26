@@ -23,13 +23,21 @@ io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
     socket.on('joinGame', (data) => {
-        socket.join(data);
-        console.log(`${socket.id} joined: ${data.game}`);
+
+        if (io.sockets.adapter.rooms.get(data.game) == undefined || (io.sockets.adapter.rooms.get(data.game).size < 2 && !socket.rooms.has(data.game))) {
+            socket.join(data.game);
+            console.log(`${socket.id} joined: ${data.game}`);
+            console.log(`Number of clients in game ${data.game}: ${io.sockets.adapter.rooms.get(data.game).size}`);
+        }
+        else if (io.sockets.adapter.rooms.get(data.game) != undefined && io.sockets.adapter.rooms.get(data.game).size == 2 && !socket.rooms.has(data.game)) {
+            socket.emit('gameFull', data)
+            console.log(`${socket.id} rejected from game: ${data.game}; game full`);
+        }
     });
 
     socket.on('updateBoard', (data) => {
         socket.to(data.game).emit('recieveBoard', data);
-        console.log(`${socket.id} moved`);
+        console.log(`${socket.id} moved on: ${data.game}`);
     });
 });
 
