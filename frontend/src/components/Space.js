@@ -12,20 +12,21 @@ export default function Space({ level,
                                 turn, 
                                 hover, 
                                 revertHover,
-                                code }) {
+                                code,
+                                localColor }) {
 
   function update() {
-    if (level > currentLevel /*&& turn == "blue"*/) {
+    if (level > currentLevel && localColor === turn) {
       changeColor();
       let nextGame = [];
       for (let i = 0; i < game.length; i++) {
         nextGame.push([]);
         for (let j = 0; j < game[i].length; j++) {
-          if (currentLevel == game.length - i - 1 && col - 1 == j) {
-            if (turn == "blue") nextGame[i].push(1);
+          if (currentLevel === game.length - i - 1 && col - 1 === j) {
+            if (turn === "blue") nextGame[i].push(1);
             else nextGame[i].push(2);
           }
-          else if (game[i][j] != 0) {
+          else if (game[i][j] !== 0) {
             nextGame[i].push(game[i][j]);
           }
           else {
@@ -34,19 +35,21 @@ export default function Space({ level,
         }
       }
       setGame(nextGame);
-      socket.emit("updateBoard", {board: nextGame, game: code});
+      socket.emit("updateBoard", {board: nextGame, turn: turn, game: code});
     }
   }
 
   function updateHover() {
-    let colors = hover();
-    const nextColors = colors.map((color, i) => {
-      if (i > level - 1 && (colors[i] == "gray" || colors[i] == "previewBlue" || colors[i] == "previewRed")) {
-        return "white";
-      }
-      else return color;
-    });
-    setColor(nextColors);
+    if (localColor === turn) {
+      let colors = hover();
+      const nextColors = colors.map((color, i) => {
+        if (i > level - 1 && (color === "gray" || color === "previewBlue" || color === "previewRed")) {
+          return "white";
+        }
+        else return color;
+      });
+      setColor(nextColors);
+    }
   }
 
   return (

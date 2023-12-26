@@ -24,12 +24,19 @@ io.on('connection', (socket) => {
 
     socket.on('joinGame', (data) => {
 
-        if (io.sockets.adapter.rooms.get(data.game) == undefined || (io.sockets.adapter.rooms.get(data.game).size < 2 && !socket.rooms.has(data.game))) {
+        if (io.sockets.adapter.rooms.get(data.game) === undefined || (io.sockets.adapter.rooms.get(data.game).size < 2 && !socket.rooms.has(data.game))) {
             socket.join(data.game);
             console.log(`${socket.id} joined: ${data.game}`);
             console.log(`Number of clients in game ${data.game}: ${io.sockets.adapter.rooms.get(data.game).size}`);
+            if (io.sockets.adapter.rooms.get(data.game).size === 1) {
+                socket.emit('assignColor', 'blue');
+            }
+            else if (io.sockets.adapter.rooms.get(data.game).size === 2) {
+                socket.emit('assignColor', 'red');
+                io.sockets.in(data.game).emit('startGame', data);
+            }
         }
-        else if (io.sockets.adapter.rooms.get(data.game) != undefined && io.sockets.adapter.rooms.get(data.game).size == 2 && !socket.rooms.has(data.game)) {
+        else if (io.sockets.adapter.rooms.get(data.game) !== undefined && io.sockets.adapter.rooms.get(data.game).size === 2 && !socket.rooms.has(data.game)) {
             socket.emit('gameFull', data)
             console.log(`${socket.id} rejected from game: ${data.game}; game full`);
         }
@@ -39,25 +46,12 @@ io.on('connection', (socket) => {
         socket.to(data.game).emit('recieveBoard', data);
         console.log(`${socket.id} moved on: ${data.game}`);
     });
+
+    socket.on('rematch', (data) => {
+        io.sockets.in(data.game).emit('startRematch', data);
+    });
 });
 
 server.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
-
-// let board = [[0, 0, 0, 0, 0, 0, 0],
-//              [0, 0, 0, 0, 0, 0, 0],
-//              [0, 0, 0, 0, 0, 0, 0],
-//              [0, 0, 0, 0, 0, 0, 0],
-//              [0, 0, 0, 0, 0, 0, 0],
-//              [0, 0, 0, 0, 0, 0, 0]];
-
-// app.get("/api/updateBoard", (req, res) => {
-//     board = req.query.board;
-//     console.log(board);
-//     res.send(board);
-// });
-
-// app.listen(PORT, () => {
-//     console.log(`Server listening on ${PORT}`);
-// });
