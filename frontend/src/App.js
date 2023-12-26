@@ -32,6 +32,7 @@ export default function App() {
             <input className='title-input' type='text' placeholder='Enter game code' onChange={(event) => setCode(event.target.value)} />
             <button className='title-button' onClick={joinGame}>{joinPrompt}</button>
         </div>
+        <p className="subheading">Created by <a href="https://github.com/kjn01" target="_blank">@kjn01</a></p>
       </header>
     </div>
     :

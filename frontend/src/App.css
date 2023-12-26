@@ -139,6 +139,16 @@
   text-align: center;
 }
 
+.subheading {
+  font-size: 20px;
+  font-weight: 500;
+  color: rgb(231, 208, 2);
+  text-align: center;
+  width: 100%;
+  bottom: 0;
+  position: fixed;
+}
+
 .main-board {
   background-color: #94a3b8;
   border-color: rgb(207, 207, 207);
@@ -220,6 +230,10 @@ input, select, textarea, input::placeholder {
 
 textarea:focus, input:focus, input:hover::placeholder {
   color: rgb(56, 56, 236);
+}
+
+a {
+  color: inherit;
 }
 
 .title-input {
