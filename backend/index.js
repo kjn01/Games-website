@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000', 'https://games-website.adaptable.app/', 'https://main--kjn01-connect4.netlify.app/']
+        origin: ['http://localhost:3000', 'https://games-website.adaptable.app/', 'https://main--kjn01-connect4.netlify.app/', 'https://games-website-whhe.onrender.com/']
     }
 });
 
