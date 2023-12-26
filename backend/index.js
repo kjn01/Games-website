@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3000', 'http://localhost:8080', 'http://192.168.1.248:8080/', 'https://main--kjn01-connect4.netlify.app/']
+        origin: ['http://localhost:3000', 'https://games-website.adaptable.app/', 'https://main--kjn01-connect4.netlify.app/']
     }
 });
 
